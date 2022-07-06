@@ -44,7 +44,7 @@ func _draw():
 	for j in trackers.size():
 		var tracker = trackers[j]
 		if tracker.backlog.size() > 0:
-			var current_angle = tracker.backlog[0]
+			var current_angle = -tracker.backlog[0] - deg2rad(90)
 			if current_angle is Vector2:
 				current_angle = current_angle.angle()
 			draw_line(center, Vector2.RIGHT.rotated(current_angle) * radius + center, HyperLog.colors[j], 2, true)

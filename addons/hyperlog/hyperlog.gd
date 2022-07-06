@@ -1,11 +1,16 @@
-extends Node
+extends CanvasLayer
+
+const VISIBILITY_TOGGLE_SCANCODE = KEY_F3
+const DISPLAY_RANGE = 20
 
 var main_log:LogContainer
-
 var colors := []
 
-onready var canvas = $canvas 
+onready var canvas : CanvasLayer = $canvas 
 onready var sketchboard = $canvas/sketchboard 
+onready var font_title = preload("res://addons/hyperlog/fonts/hyperlog_title.tres")
+onready var font_normal = preload("res://addons/hyperlog/fonts/hyperlog_text.tres")
+onready var label = preload("res://addons/hyperlog/fonts/HyperLogLabel.tscn")
 
 var containers := []
 
@@ -28,12 +33,21 @@ func log(node:Node, print1 = null, print2 = null, print3 = null, print4 = null)-
 	container.set_scale(Vector2.ONE * .75)
 	return container
 
+func _input(ev):
+	pass
+	if ev is InputEventKey and ev.pressed and ev.scancode == VISIBILITY_TOGGLE_SCANCODE:
+		visible = !visible
+
 func remove_log(node:Node):
 	for i in containers.size():
 		if containers[i].parent_node == node:
 			containers[i].queue_free()
 			containers.remove(i)
 			return
+
+func destroy_log(node:Node):
+	containers.erase(node)
+	node.queue_free()
 
 func pause_log(node:Node):
 	for container in containers:
@@ -76,7 +90,7 @@ func add_angle()->TrackerAngle:
 	return main_log.add_angle()
 
 func angle(properties = "rotation", node = null)->TrackerAngle:
-	main_log.s1ow()
+	main_log.show()
 	return main_log.angle(properties, node)
 
 func add_graph()->TrackerGraph:

@@ -12,6 +12,8 @@ func _process(delta):
 		var label_value = value_container.get_child(i)
 		
 		var property_name = tracker.property_name
+		if !is_instance_valid(tracker.node):
+			return
 		var value = tracker.format(tracker.get_value())
 		label_name.text = property_name
 		label_value.text = str(value)
@@ -26,7 +28,7 @@ func add_tracker(property:String, node:Node = null)->ValueTracker:
 	return .add_tracker(property, node)
 
 func _add_label(parent):
-	var label = Label.new()
+	var label : Label = HyperLog.label.instance()
 	parent.add_child(label)
 
 func remove_tracker(tracker):

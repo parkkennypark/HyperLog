@@ -12,9 +12,24 @@ var align_horizontal := 0
 var align_vertical := 0
 
 func _process(delta):
+	if !is_instance_valid(parent_node):
+		destroy_log()
+		return
+		
 	if parent_node and parent_node != get_tree().get_root():
 #		rect_global_position = parent_node.global_position
-		rect_position = parent_node.get_global_transform_with_canvas().origin + _offset
+		if parent_node is Spatial:
+			var cam = get_viewport().get_camera()
+			var behind = cam.is_position_behind(parent_node.global_transform.origin)
+			var length = (parent_node.global_transform.origin - cam.global_transform.origin).length()
+			if behind or length > HyperLog.DISPLAY_RANGE:
+				visible = false
+			else:
+				rect_position = get_viewport().get_camera().unproject_position(parent_node.global_transform.origin)
+				visible = true
+		elif parent_node is Node2D:
+			rect_position = parent_node.get_global_transform_with_canvas().origin + _offset
+			
 		if align_horizontal == HALIGN_CENTER:
 			rect_position.x -= rect_size.x / 2 * rect_scale.x
 		elif align_horizontal == HALIGN_RIGHT:
@@ -146,6 +161,9 @@ func align(horizontal = HALIGN_LEFT, vertical = VALIGN_TOP)->LogContainer:
 
 func remove():
 	HyperLog.remove_log(parent_node)
+
+func destroy_log():
+	HyperLog.destroy_log(self)
 
 #func show()->LogContainer:
 #	visible = true

@@ -41,6 +41,12 @@ func _init(node:Node, property:String, parent:Node = null):
 		self.property_name = str(parent.get_path_to(node)) + " > " + self.property
 	else:
 		self.property_name = self.property
+	
+#	while "." in property_name:
+#		var index = property_name.find(".")
+#		self.node = node.get_indexed(property_name.substr(0, index))
+#		property_name = property_name.substr(index + 1)
+#	self.property = property_name
 
 func get_value():
 	return node.get_indexed(property)
