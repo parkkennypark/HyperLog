@@ -2,9 +2,11 @@ extends CanvasLayer
 
 const VISIBILITY_TOGGLE_SCANCODE = KEY_F3
 const DISPLAY_RANGE = 20
+const START_ENABLED : bool = false
 
 var main_log:LogContainer
 var colors := []
+var enabled : bool
 
 onready var canvas : CanvasLayer = $canvas 
 onready var sketchboard = $canvas/sketchboard 
@@ -24,6 +26,8 @@ func _ready():
 		color.h += i * (1 / 4.0 + 1 / 32.0)
 		color.v *= 1 - (i / 128.0) * .5
 		colors.push_back(color)
+	
+	set_enabled(START_ENABLED)
 
 onready var container_ref = preload("res://addons/hyperlog/log_container.tscn")
 func log(node:Node, print1 = null, print2 = null, print3 = null, print4 = null)->LogContainer:
@@ -34,9 +38,16 @@ func log(node:Node, print1 = null, print2 = null, print3 = null, print4 = null)-
 	return container
 
 func _input(ev):
-	pass
 	if ev is InputEventKey and ev.pressed and ev.scancode == VISIBILITY_TOGGLE_SCANCODE:
-		visible = !visible
+		set_enabled(!enabled)
+
+func set_enabled(enabled):
+	self.enabled = enabled
+	
+	visible = enabled
+	
+	for container in containers:
+		container.tracking = enabled
 
 func remove_log(node:Node):
 	for i in containers.size():
